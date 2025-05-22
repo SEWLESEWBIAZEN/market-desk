@@ -1,0 +1,3 @@
+fastApi
+slowApi
+pydantic[email]
