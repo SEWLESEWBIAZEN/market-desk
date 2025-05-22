@@ -19,7 +19,6 @@ export default function SignUp() {
 
     async function loginWithGoogle() {
         const response = await signInWithGoogle();
-
         if (response !== true) {
             toast.error('Something went wrong');
             navigate("/sign-up")
@@ -36,12 +35,7 @@ export default function SignUp() {
             if(response){
                 toast.success("Sign Up Successful")
                 navigate("/login")
-            }
-
-            if (!response) {
-               toast.error('Something went wrong.');
-               navigate("/login")
-            }
+            }            
         }
     }
     

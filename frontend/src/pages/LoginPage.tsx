@@ -1,7 +1,7 @@
 
 import { login, signInWithGoogle } from "@/firebase/authentication";
 import { useState } from "react";
-import {  MultiFactorResolver } from "firebase/auth";
+import { MultiFactorResolver } from "firebase/auth";
 import { CodeSignIn } from "@/components/CodeSignIn";
 import { Login } from "@/components/Login";
 import { useNavigate } from "react-router-dom";
@@ -20,38 +20,22 @@ export default function LoginPage() {
         if (response === true) {
             navigate('/');
         } else {
-            // await handleMFA(response);
-        }
-    }
-
-
-    async function loginWithEmailAndPassword(email: string, password: string) {
-        const response = await login(email, password);
-
-        if (response !== null) {
-            toast.success("Login Successful")
-            navigate('/');
-        } else {
-            // await handleMFA(response);
-        }
-    }
-
-    // async function handleMFA(error: any) {
-    //     if (error.code === 'auth/multi-factor-auth-required' && recaptcha) {
             
-    //         const data = await verifyUserMFA(error, recaptcha, 0);
-    //         console.log(data)
-    //         if (!data) {
-    //             toast.error('Something went wrong.');
-    //         } else {
-    //             const { verificationId, resolver } = data;
-    //             setVerificationId(verificationId);
-    //             setResolver(resolver);
-    //         }
-    //     } else {
-    //         toast.error('Something went wrong during MFA.');
-    //     }
-    // }
+        }
+    }
+    async function loginWithEmailAndPassword(email: string, password: string) {
+        try {
+            const response = await login(email, password);
+            if (response !== null) {
+                toast.success("Login Successful")
+                navigate('/');
+            } 
+        }
+        catch (e) {            
+            toast.error("Something went wrong!")            
+        }
+    }
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8">

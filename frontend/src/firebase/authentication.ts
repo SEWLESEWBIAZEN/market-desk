@@ -14,37 +14,99 @@ import {
     signOut,
     User
 } from "firebase/auth";
-import {auth } from "@/firebase/init";
+import { auth } from "@/firebase/init";
+import { toast } from "sonner";
 
 export async function signInWithGoogle(): Promise<any> {
+    let errorMessage = ""
     try {
-        await signInWithPopup(auth, new GoogleAuthProvider(),browserPopupRedirectResolver);
+        await signInWithPopup(auth, new GoogleAuthProvider(), browserPopupRedirectResolver);
         return true;
     } catch (e) {
-        return e;
-    }
-}
-
-export async function signUp(email: string, password: string): Promise<boolean> {
-    try {
-        await createUserWithEmailAndPassword(auth, email, password);
-        return true;
-    } catch (e) {
+        switch(e.code){
+            case 'auth/invalid-credential':
+                errorMessage='Please try again!'
+                break
+            
+            case 'auth/popup-blocked':
+                errorMessage = 'Could not Process, Pop Up blocked by browser. Try use different browser.'
+                break
+            
+            case 'auth/unauthorized-domain':
+                errorMessage= "Domain is Unauthorized, contact Admin"
+                break
+            
+            default:
+                errorMessage = "Something went wrong while signing in with google!"
+            
+        }
+        toast.error(`Signup Failed ${errorMessage}`)
         return false;
     }
 }
 
-
-
-
+export async function signUp(email: string, password: string): Promise<boolean> {
+    let errorMessage = ""
+    try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        return true;
+    } catch (e) {
+        switch (e.code) {
+            case 'auth/email-already-in-use':
+                errorMessage = `Signup failed. User registerd with ${email}. Please check and try again!`
+                break
+            case 'auth/invalid-email':
+                errorMessage = 'The email address is malformed.'
+                break
+            case 'auth/operation-not-allowed':
+                errorMessage = 'Email/password sign-up is disabled.'
+                break
+            case 'auth/weak-password':
+                errorMessage = 'Password is too weak (e.g. less than 6 chars).'
+                break
+            default:
+                errorMessage = "Something went wrong!"
+        }
+        toast.error(errorMessage)
+        return false;
+    }
+}
 
 export async function login(email: string, password: string): Promise<User | null> {
+    let errorMessage = ""
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         return userCredential.user;
     } catch (error: any) {
         // Optional: log or handle specific errors
-        console.error("Login failed:", error.code, error.message);
+        switch (error.code) {
+            case 'auth/user-not-found':
+                errorMessage = 'No account found with this email.'
+                break
+
+            case 'auth/wrong-password':
+                errorMessage = 'Incorrect password'
+                break
+
+            case 'auth/invalid-email':
+                errorMessage = 'Enter Valid email'
+                break
+
+            case 'auth/too-many-requests':
+                errorMessage = 'Too many failed attempts. Try again later.'
+                break
+
+            case 'auth/user-disabled':
+                errorMessage = 'User Account disabled. Contact the admin.'
+                break
+            case 'auth/invalid-credential':
+                errorMessage = 'Login Failed, Invalid Credintials!'
+                break
+
+            default:
+                errorMessage = 'Something went wrong'
+        }
+        toast.error(`Login Failed, ${errorMessage}`)
         return null;
     }
 }
@@ -54,6 +116,7 @@ export async function logout(): Promise<boolean> {
         await signOut(auth);
         return true;
     } catch (e) {
+        toast.error("Something went wrong!")
         return false;
     }
 }
