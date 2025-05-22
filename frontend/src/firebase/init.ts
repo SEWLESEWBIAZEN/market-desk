@@ -17,7 +17,7 @@ if(getApps().length===0){
 }else{
     app=getApp()
 }
+const auth = getAuth(app);
+auth.useDeviceLanguage()
 
-export {app}
-
-export const auth = getAuth(app)
+export {app,auth}

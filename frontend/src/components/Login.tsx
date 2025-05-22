@@ -2,13 +2,13 @@ import {At, GoogleLogo, Password} from "phosphor-react";
 import {FormEvent, useRef} from "react";
 import { toast } from "sonner";
 
-
 type Props = {
     loginWithGoogle: () => void,
     loginWithEmailAndPassword: (email: string, password: string) => void
 }
 
 export function Login({loginWithGoogle, loginWithEmailAndPassword}: Props) {
+ 
     const email = useRef<HTMLInputElement>(null);
     const password = useRef<HTMLInputElement>(null);
 
@@ -21,7 +21,7 @@ export function Login({loginWithGoogle, loginWithEmailAndPassword}: Props) {
             toast.error("Something went wrong.")
         }
     }
-
+  
     return (
         <>
         <div className="flex flex-col">

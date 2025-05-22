@@ -26,7 +26,7 @@ const App = () => (
             {/* Public routes */}
             <Route path="/sign-up" element={<SignUPPage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/user" element={<UserPage />} />
+            {/* <Route path="/user" element={<UserPage />} /> */}
 
             {/* Redirect root to dashboard */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />

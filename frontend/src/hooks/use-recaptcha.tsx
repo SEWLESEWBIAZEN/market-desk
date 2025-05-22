@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {ApplicationVerifier, RecaptchaVerifier} from "firebase/auth";
-import {auth} from "@/firebase/authentication";
+import { auth } from "@/firebase/init";
+
 
 export function useRecaptcha(componentId: string) {
     const [recaptcha, setRecaptcha] = useState<ApplicationVerifier>();
@@ -8,7 +9,8 @@ export function useRecaptcha(componentId: string) {
     useEffect(() => {
         const recaptchaVerifier = new RecaptchaVerifier(auth,componentId, {
             "size": "invisible",
-            "callback": () => {}
+            "callback": () => {                
+            }
         });
 
         setRecaptcha(recaptchaVerifier);
