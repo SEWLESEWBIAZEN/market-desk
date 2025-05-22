@@ -1,7 +1,5 @@
-
 import React, { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-// import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -12,6 +10,8 @@ import { logout as userLogout } from "@/firebase/authentication";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
+import { getInitials } from "@/utils/getInitials";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -19,48 +19,39 @@ interface DashboardLayoutProps {
   loading?: boolean;
 }
 
-export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ 
-  children, 
+export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
+  children,
   title = "Dashboard",
   loading = false
 }) => {
-   const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [isUserLoggedOut, setIsUserLoggedOut] = useState<boolean>(false)
   const navigate = useNavigate();
-  
-     async function handleLogout() {
-        try {
-            const isLoggedOut = await userLogout()
-            if (isLoggedOut) setIsUserLoggedOut(true)
-        } catch (err) {
-            console.error("Logout failed", err)
-        }
-    }
-    useEffect(() => {
-        if (isUserLoggedOut) {
-            navigate('/login')
-        }
-    }, [isUserLoggedOut, navigate])
 
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map(n => n[0])
-      .join("")
-      .toUpperCase();
-  };
-  
+  async function handleLogout() {
+    try {
+      const isLoggedOut = await userLogout()
+      if (isLoggedOut) setIsUserLoggedOut(true)
+    } catch (err) {
+      toast.error("Logout failed")
+    }
+  }
+  useEffect(() => {
+    if (isUserLoggedOut) {
+      navigate('/login')
+    }
+  }, [isUserLoggedOut, navigate])
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
         <Sidebar>
           <SidebarHeader className="flex items-center px-4 py-6 space-x-2.5">
             <div className="flex-1">
-              <h2 className="text-xl font-bold">MarketDesk</h2>
+              <h2 className="text-xl font-bold">Market Desk</h2>
               <p className="text-xs text-sidebar-foreground/70">Marketing Analytics</p>
             </div>
           </SidebarHeader>
-          
           <SidebarContent>
             <SidebarGroup>
               <SidebarGroupLabel>Analytics</SidebarGroupLabel>
@@ -68,7 +59,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <Button 
+                      <Button
                         variant="ghost"
                         className="w-full justify-start"
                         onClick={() => navigate("/dashboard")}
@@ -80,14 +71,13 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
-            
             <SidebarGroup>
               <SidebarGroupLabel>Platforms</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <Button 
+                      <Button
                         variant="ghost"
                         className="w-full justify-start"
                         onClick={() => navigate("/dashboard/instantly")}
@@ -99,7 +89,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <Button 
+                      <Button
                         variant="ghost"
                         className="w-full justify-start"
                         onClick={() => navigate("/dashboard/google")}
@@ -111,7 +101,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <Button 
+                      <Button
                         variant="ghost"
                         className="w-full justify-start"
                         onClick={() => navigate("/dashboard/meta")}
@@ -124,14 +114,13 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
-            
             <SidebarGroup>
               <SidebarGroupLabel>Settings</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <Button 
+                      <Button
                         variant="ghost"
                         className="w-full justify-start"
                         onClick={() => navigate("/dashboard/settings")}
@@ -144,20 +133,19 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>
-          
           <SidebarFooter>
             <div className="p-4 space-y-4">
               <SessionTimer />
-              
+
               <div className="flex items-center justify-between">
                 {user && (
                   <div className="flex items-center">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="p-0 h-auto">
+                        <Button variant="ghost" className="p-0 h-auto hover:bg-gray-900 hover:px-2 hover:text-slate-100">
                           <Avatar className="h-8 w-8 mr-2">
-                            <AvatarImage src="{user.avatar}" alt="{user.name}" />
-                            <AvatarFallback>{getInitials(user?.name || "User")}</AvatarFallback>
+                            <AvatarImage src={user.avatar} alt={user.name} />
+                            <AvatarFallback className="text-black">{getInitials(user?.name || "Default User")}</AvatarFallback>
                           </Avatar>
                           <div className="text-left">
                             <p className="text-sm font-medium">{user?.name || "User"}</p>
@@ -189,13 +177,13 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             </div>
           </SidebarFooter>
         </Sidebar>
-        
+
         <div className="flex-1 flex flex-col min-h-screen">
           <header className="border-b sticky top-0 z-10 bg-background/95 backdrop-blur">
             <div className="flex h-16 items-center px-6">
               <SidebarTrigger />
               <h1 className="text-xl font-semibold ml-4">{title}</h1>
-              
+
               <div className="ml-auto flex items-center space-x-4">
                 {loading && <Loader className="animate-spin h-5 w-5" />}
                 <Button variant="outline" size="sm" onClick={handleLogout}>
@@ -205,7 +193,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               </div>
             </div>
           </header>
-          
+
           <main className="flex-1 overflow-auto p-6">{children}</main>
         </div>
       </div>

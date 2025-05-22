@@ -13,23 +13,29 @@ import { toast } from "sonner";
 export default function SignUp() {
     const [passwordValue,setPasswordValue]=useState<string>("")
     const [score,setScore]=useState<number>(0)
+    const [isPending, setIsPending]=useState(false)
     const email = useRef<HTMLInputElement>(null);
     const password = useRef<HTMLInputElement>(null);
     const navigate = useNavigate()
 
-    async function loginWithGoogle() {
+    async function loginWithGoogle() { 
+        setIsPending(true)       
         const response = await signInWithGoogle();
         if (response !== true) {
             toast.error('Something went wrong');
             navigate("/sign-up")
+            
         } 
-        if (response) navigate("/")      
+        if (response) navigate("/")   
+            
+        setIsPending(false)
     }
 
 
     async function createAnAccount(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault();
+        setIsPending(true)
 
+        event.preventDefault();
         if (email.current && password.current) {
             const response = await signUp(email.current.value, password.current.value);
             if(response){
@@ -37,6 +43,7 @@ export default function SignUp() {
                 navigate("/login")
             }            
         }
+        setIsPending(false)
     }
     
     // calculate the score of password strength
@@ -90,8 +97,8 @@ export default function SignUp() {
                     </div>
                 </div>
                 {passwordValue!==""&&<PasswordStrengthIndicator score={score} />}
-                <button type="submit"
-                    className="bg-black rounded-xl flex h-11 w-full items-center justify-center px-6 hover:bg-gray-600">
+                <button type="submit" disabled={isPending}
+                    className={`bg-black rounded-xl flex h-11 w-full items-center justify-center px-6 hover:bg-gray-600 ${isPending?"bg-gray-600":""}`}>
                     <span
                         className="relative text-base font-light text-white">Sign Up</span>
                 </button>

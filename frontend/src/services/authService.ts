@@ -1,8 +1,7 @@
 // authService.ts
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged, User as FirebaseUser } from "firebase/auth"
+import { onAuthStateChanged, User as FirebaseUser } from "firebase/auth"
 import { User } from "../types"
 import { auth } from "@/firebase/init"
-import { browserLocalPersistence, browserSessionPersistence } from "firebase/auth"
 
 class AuthService {  
   // Check password strength (same as before)
@@ -33,24 +32,6 @@ class AuthService {
     }
   }
 
-  // Login with Firebase
-  async login(email: string, password: string, rememberMe: boolean): Promise<User> {
-    try {
-      if (rememberMe) {
-        // Persist across sessions
-        await auth.setPersistence(browserLocalPersistence)
-      } else {
-        await auth.setPersistence(browserSessionPersistence)
-      }
-
-      const result = await signInWithEmailAndPassword(auth, email, password)
-      const firebaseUser = result.user
-
-      return this.mapFirebaseUser(firebaseUser)
-    } catch (error) {
-      throw new Error("Invalid email or password")
-    }
-  }
 
   // Get current user
   async getCurrentUser(): Promise<User | null> {
@@ -65,19 +46,6 @@ class AuthService {
       })
     })
   }
-
-  // Logout from Firebase
-  async logout(): Promise<boolean> {
-    try {
-      await signOut(auth)
-      return true
-    } catch (err) {
-      console.error("Logout failed:", err)
-      return false
-    }
-  }
-
-
   
   // Refresh session
   refreshSession(): void {

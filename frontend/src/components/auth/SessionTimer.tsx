@@ -15,7 +15,6 @@ export const SessionTimer: React.FC = () => {
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
-
     const monitorSession = async () => {
       onAuthStateChanged(auth, async (user) => {
         if (!user) return;

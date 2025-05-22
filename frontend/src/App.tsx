@@ -11,7 +11,6 @@ import { PlatformPage } from "./pages/PlatformPages";
 import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 import SignUPPage from "./pages/SignUpPage";
-import UserPage from "./pages/UserPage";
 import MFAPage from "./pages/MFAPage";
 
 const queryClient = new QueryClient();
